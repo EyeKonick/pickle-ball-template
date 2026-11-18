@@ -57,6 +57,8 @@ const linkAttrs: HTMLAttributes<'a'> = external ? { target: '_blank', rel: 'noop
 
 <style>
   .btn {
+    --btn-accent: var(--color-ball); /* the bar that slides in along the bottom on hover and focus */
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -70,20 +72,31 @@ const linkAttrs: HTMLAttributes<'a'> = external ? { target: '_blank', rel: 'noop
     white-space: nowrap;
     cursor: pointer;
     transition:
-      background-color var(--duration-fast) var(--ease-out),
-      color var(--duration-fast) var(--ease-out),
-      box-shadow var(--duration-fast) var(--ease-out);
+      background-color var(--motion-hover) var(--ease-motion),
+      color var(--motion-hover) var(--ease-motion),
+      box-shadow var(--motion-hover) var(--ease-motion);
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 3px;
+    background: var(--btn-accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--motion-hover) var(--ease-motion);
+  }
+
+  .btn:focus-visible::after {
+    transform: scaleX(1);
   }
 
   .btn svg {
     width: 18px;
     height: 18px;
     flex: none;
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-
-  .btn:hover svg {
-    transform: translateX(3px);
+    transition: transform var(--motion-hover) var(--ease-motion);
   }
 
   .btn--md {
@@ -103,27 +116,17 @@ const linkAttrs: HTMLAttributes<'a'> = external ? { target: '_blank', rel: 'noop
     color: var(--color-paper);
   }
 
-  .btn--ink:hover {
-    background: var(--color-court);
-  }
-
   .btn--ball {
+    --btn-accent: var(--color-ink);
     background: var(--color-ball);
     color: var(--color-ink);
   }
 
-  .btn--ball:hover {
-    background: var(--color-ball-deep);
-  }
-
   .btn--ghost {
+    --btn-accent: var(--color-ink);
     background: transparent;
     color: var(--color-ink);
     box-shadow: inset 0 0 0 1.5px var(--color-ink);
-  }
-
-  .btn--ghost:hover {
-    background: var(--color-paper-shade);
   }
 
   .btn--ghost-light {
@@ -132,9 +135,29 @@ const linkAttrs: HTMLAttributes<'a'> = external ? { target: '_blank', rel: 'noop
     box-shadow: inset 0 0 0 1.5px var(--color-on-dark-soft);
   }
 
-  .btn--ghost-light:hover {
-    box-shadow: inset 0 0 0 1.5px var(--color-on-dark);
-    background: rgb(255 255 255 / 0.08);
+  @media (hover: hover) {
+    .btn:hover::after {
+      transform: scaleX(1);
+    }
+
+    .btn--ball:hover {
+      background: var(--color-ball-deep);
+    }
+
+    .btn--ghost:hover {
+      background: var(--color-paper-shade);
+    }
+
+    .btn--ghost-light:hover {
+      box-shadow: inset 0 0 0 1.5px var(--color-on-dark);
+      background: rgb(255 255 255 / 0.08);
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .btn:hover svg {
+      transform: translateX(3px);
+    }
   }
 
   .btn[aria-busy='true'] {
@@ -145,5 +168,9 @@ const linkAttrs: HTMLAttributes<'a'> = external ? { target: '_blank', rel: 'noop
   .btn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+  }
+
+  .btn:disabled::after {
+    transform: scaleX(0);
   }
 </style>

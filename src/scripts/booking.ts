@@ -215,7 +215,7 @@ function initBooking(root: HTMLElement) {
       if (i === index) item.setAttribute('aria-current', 'step');
       else item.removeAttribute('aria-current');
     });
-    progress.style.setProperty('--fill', `${(index / (STEP_IDS.length - 1)) * 100}%`);
+    progress.style.setProperty('--fill', (index / (STEP_IDS.length - 1)).toFixed(3)); // 0–1, scales the rail fill
     form.hidden = index === STEP_IDS.length - 1;
     q<HTMLElement>('[data-ticket]').hidden = index === STEP_IDS.length - 1;
 

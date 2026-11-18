@@ -18,7 +18,7 @@ const contacts = [
     <SectionHeading id="contact-title" lines={copy.lines} tone="dark">{copy.lede}</SectionHeading>
 
     <div class="location__grid">
-      <div class="where">
+      <div class="where" data-reveal="stagger">
         <address class="where__address display">
           <span>{site.address.street}</span>
           <span>{site.address.locality} {site.address.postalCode}</span>
@@ -35,7 +35,7 @@ const contacts = [
         </div>
       </div>
 
-      <ul class="contacts">
+      <ul class="contacts" data-reveal="stagger" data-reveal-delay="1">
         {
           contacts.map((c) => (
             <li>
@@ -108,11 +108,31 @@ const contacts = [
     padding: 22px 0;
     border-bottom: 1px solid rgb(255 255 255 / 0.35);
     text-decoration: none;
-    transition: padding-left var(--duration-base) var(--ease-out);
   }
 
-  .contacts a:hover {
-    padding-left: var(--space-2);
+  .contacts__value,
+  .contacts svg {
+    transition:
+      transform var(--motion-hover) var(--ease-motion),
+      color var(--motion-hover) var(--ease-motion);
+  }
+
+  /* Hover and focus: the value and arrow step right and the arrow turns ball yellow */
+  .contacts a:focus-visible svg {
+    color: var(--color-ball);
+  }
+
+  @media (hover: hover) {
+    .contacts a:hover svg {
+      color: var(--color-ball);
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .contacts a:hover .contacts__value,
+    .contacts a:hover svg {
+      transform: translateX(var(--space-2));
+    }
   }
 
   .contacts__label {

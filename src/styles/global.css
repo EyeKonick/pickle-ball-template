@@ -122,6 +122,47 @@ textarea {
   top: var(--space-2);
 }
 
+/*
+ * Scroll reveals (driven by src/scripts/reveal.ts).
+ *   data-reveal            the element fades up once when it enters the viewport
+ *   data-reveal="stagger"  its direct children fade up one after another
+ *   data-reveal="lines"    each child line slides up inside its own clip (transform only)
+ *   data-reveal-delay="n"  start n stagger steps later
+ * The hidden state exists only while JS runs (.js on <html>) and motion is allowed,
+ * so without JS or with reduced motion every element simply shows. Once an element has
+ * finished revealing, reveal.ts drops its data-reveal so component hover transitions take over.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal]:not([data-reveal='stagger'], [data-reveal='lines']),
+  html.js [data-reveal='stagger'] > * {
+    opacity: 0;
+    transform: translateY(var(--motion-distance));
+    transition:
+      opacity var(--motion-reveal) var(--ease-motion),
+      transform var(--motion-reveal) var(--ease-motion);
+    transition-delay: calc(var(--reveal-i, 0) * var(--motion-stagger));
+  }
+
+  html.js [data-reveal='lines'] > * {
+    clip-path: inset(-0.2em -0.1em 0 -0.1em);
+  }
+
+  html.js [data-reveal='lines'] > * > * {
+    display: block;
+    transform: translateY(115%);
+    transition: transform var(--motion-line) var(--ease-motion);
+    transition-delay: calc(var(--reveal-i, 0) * var(--motion-stagger));
+  }
+
+  html.js .is-revealed[data-reveal]:not([data-reveal='stagger'], [data-reveal='lines']),
+  html.js .is-revealed[data-reveal='stagger'] > *,
+  html.js .is-revealed[data-reveal='lines'] > * > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: no movement anywhere. Content is visible at once; hovers change color only. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -130,8 +171,7 @@ textarea {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
   }
 }

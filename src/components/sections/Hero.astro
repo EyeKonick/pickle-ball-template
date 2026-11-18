@@ -25,6 +25,7 @@ const defaultStart = 19;
       sizes="700px"
       loading="eager"
       fetchpriority="high"
+      data-parallax
       style={`object-position: ${heroPhoto.focus}`}
     />
     <figcaption>Photo: {heroPhoto.credit}</figcaption>
@@ -130,6 +131,8 @@ const defaultStart = 19;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Settles from a slight zoom on load; reveal.ts adds a gentle scroll drift via `translate`. */
+    animation: hero-settle var(--motion-settle) var(--ease-motion) both;
   }
 
   .hero__photo::after {
@@ -164,6 +167,7 @@ const defaultStart = 19;
     background: var(--color-ball);
     color: var(--color-ink);
     box-shadow: var(--shadow-stamp);
+    animation: stamp-in var(--motion-reveal) var(--ease-motion) var(--hero-stamp-delay) both;
   }
 
   .stamp svg {
@@ -219,21 +223,47 @@ const defaultStart = 19;
 
   .line > span {
     display: inline-block;
-    animation: wipe var(--duration-slow) var(--ease-out) both;
+    animation: wipe var(--motion-line) var(--ease-motion) both;
   }
 
   .line:nth-child(2) > span {
-    animation-delay: 0.08s;
+    animation-delay: var(--hero-line-step);
   }
 
   .line:nth-child(3) > span {
-    animation-delay: 0.16s;
+    animation-delay: calc(var(--hero-line-step) * 2);
   }
 
   .line--highlight > span {
+    position: relative;
+    z-index: 0;
     margin-left: -0.04em;
     padding: 0 0.04em;
-    background: linear-gradient(transparent 58%, var(--color-ball) 58%, var(--color-ball) 92%, transparent 92%);
+  }
+
+  /* The ball-yellow highlighter, wiped in from the left once the line has landed */
+  .line--highlight > span::before {
+    content: '';
+    position: absolute;
+    inset: 58% 0 8%;
+    z-index: -1;
+    background: var(--color-ball);
+    transform-origin: left center;
+    animation: bar-wipe var(--motion-reveal) var(--ease-motion) var(--hero-bar-delay) both;
+  }
+
+  .lede,
+  .actions,
+  .slab {
+    animation: rise var(--motion-reveal) var(--ease-motion) var(--hero-copy-delay) both;
+  }
+
+  .actions {
+    animation-delay: calc(var(--hero-copy-delay) + var(--motion-stagger));
+  }
+
+  .slab {
+    animation-delay: calc(var(--hero-copy-delay) + var(--motion-stagger) * 2);
   }
 
   .lede {
@@ -251,17 +281,42 @@ const defaultStart = 19;
   }
 
   .text-link {
+    position: relative;
+    z-index: 0;
     padding: var(--space-2) 0;
     font-weight: 600;
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 6px;
     text-decoration-color: var(--color-court);
-    transition: color var(--duration-fast);
+    transition: color var(--motion-hover) var(--ease-motion);
   }
 
-  .text-link:hover {
-    color: var(--color-court);
+  /* A ball-yellow highlighter slides in under the underline */
+  .text-link::before {
+    content: '';
+    position: absolute;
+    inset: auto -2px 4px;
+    height: 10px;
+    z-index: -1;
+    background: var(--color-ball);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--motion-hover) var(--ease-motion);
+  }
+
+  .text-link:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  @media (hover: hover) {
+    .text-link:hover {
+      color: var(--color-court);
+    }
+
+    .text-link:hover::before {
+      transform: scaleX(1);
+    }
   }
 
   /* Quick-book slab, straddling the seam */
@@ -294,11 +349,32 @@ const defaultStart = 19;
     padding: 14px 20px;
     border: 0;
     background: var(--color-court-deep);
-    transition: background-color var(--duration-fast);
+    transition: background-color var(--motion-hover) var(--ease-motion);
   }
 
-  .cell:hover {
+  /* Hairline border that fades in on hover */
+  .cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-hover) var(--ease-motion);
+  }
+
+  .cell:focus-within {
     background: var(--color-court-hover);
+  }
+
+  @media (hover: hover) {
+    .cell:hover {
+      background: var(--color-court-hover);
+    }
+
+    .cell:hover::before {
+      opacity: 1;
+    }
   }
 
   .cell:focus-within {
@@ -382,13 +458,15 @@ const defaultStart = 19;
     white-space: nowrap;
     cursor: pointer;
     transition:
-      background-color var(--duration-fast),
-      color var(--duration-fast),
-      border-color var(--duration-fast);
+      background-color var(--motion-quick) var(--ease-motion),
+      color var(--motion-quick) var(--ease-motion),
+      border-color var(--motion-quick) var(--ease-motion);
   }
 
-  .choices label:hover {
-    border-color: var(--color-on-dark);
+  @media (hover: hover) {
+    .choices label:hover {
+      border-color: var(--color-on-dark);
+    }
   }
 
   .choices small {
@@ -439,15 +517,48 @@ const defaultStart = 19;
     text-decoration-thickness: 1.5px;
     text-underline-offset: 5px;
     text-decoration-color: rgb(255 255 255 / 0.5);
+    transition: text-decoration-color var(--motion-hover) var(--ease-motion);
   }
 
-  .slab__foot a:hover {
+  .slab__foot a:focus-visible {
     text-decoration-color: var(--color-ball);
+  }
+
+  @media (hover: hover) {
+    .slab__foot a:hover {
+      text-decoration-color: var(--color-ball);
+    }
   }
 
   @keyframes wipe {
     from {
       transform: translateY(100%);
+    }
+  }
+
+  @keyframes bar-wipe {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(var(--motion-distance));
+    }
+  }
+
+  @keyframes stamp-in {
+    from {
+      opacity: 0;
+      transform: scale(var(--motion-stamp-scale));
+    }
+  }
+
+  @keyframes hero-settle {
+    from {
+      scale: var(--motion-hero-zoom);
     }
   }
 </style>

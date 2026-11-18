@@ -94,7 +94,7 @@ components:
     padding: "0 28px"
     height: "56px"
   button-ink-hover:
-    backgroundColor: "{colors.court-blue}"
+    backgroundColor: "{colors.court-ink}"
     textColor: "{colors.newsprint-paper}"
   button-ink-md:
     backgroundColor: "{colors.court-ink}"
@@ -174,7 +174,7 @@ components:
 
 The site reads as one issue of a local sports magazine devoted to a single club. Every section is a spread: it opens on a hard ink rule, sets an oversized condensed caps headline against a short lede, and carries real photographs with credit captions. The ground is warm newsprint, the type is ink, and the two sport colors (court blue and ball yellow) arrive as printed objects: blue as solid slabs, yellow as a highlighter stroke and a round stamp.
 
-Density is editorial, not dashboard. Sections breathe on a 128px vertical rhythm, content sits in a fixed 1200px column, and information is organised by rules and columns rather than by boxed cards. Corners are square everywhere except the two things that are round in the real world: the stamp and the step dots. Motion is short and print-like: headlines wipe up line by line, arrows nudge, underlines draw in.
+Density is editorial, not dashboard. Sections breathe on a 128px vertical rhythm, content sits in a fixed 1200px column, and information is organised by rules and columns rather than by boxed cards. Corners are square everywhere except the two things that are round in the real world: the stamp and the step dots. Motion is weighted and print-like, like a magazine spread turning: headlines rise line by line inside a clip, content fades up 20px in short staggers, the ball-yellow highlighter wipes in from the left, arrows nudge and underlines draw in. Every value lives in the Motion block of `src/styles/tokens.css`; reveals are driven by `data-reveal` and `src/scripts/reveal.ts`.
 
 The world refuses the card-grid SaaS landing page and the dark-overlay sports hero; photos sit next to paper, never under a scrim.
 
@@ -193,7 +193,7 @@ A three-ink print palette on warm paper: ink for structure, court blue for slabs
 - **Court Ink** (court-ink): text, rules, primary buttons, selected tiles, the About section ground and the rate card. The workhorse; almost every line on the page is this color.
 
 ### Secondary
-- **Court Blue** (court-blue): solid slabs only: the hero quick-book slab, the "Paid is not confirmed" callout, the pending-review status bar and the Location section. Also the hover fill of the ink button, the focus ring on paper and the underline color of text links.
+- **Court Blue** (court-blue): solid slabs only: the hero quick-book slab, the "Paid is not confirmed" callout, the pending-review status bar and the Location section. Also the underline color of text links.
 - **Court Blue Deep** (court-blue-deep) and **Court Blue Hover** (court-blue-hover): field cells inside a blue slab, at rest and on hover.
 
 ### Tertiary
@@ -249,14 +249,15 @@ The hero is a split spread: a paper copy column on the left and a full-height ph
 
 ## Elevation & Depth
 
-The system is flat. Depth comes from ink rules, from solid ink and blue slabs set against paper, and from white slips (inputs, tiles, the ticket) laid on newsprint. Exactly two soft shadows exist, both for objects that physically sit on top of the hero photograph and seam.
+The system is flat. Depth comes from ink rules, from solid ink and blue slabs set against paper, and from white slips (inputs, tiles, the ticket) laid on newsprint. Two resting shadows exist, both for objects that physically sit on top of the hero photograph and seam. A third appears only on hover, when a court row or gallery photo lifts.
 
 ### Shadow Vocabulary
 - **Slab drop** (`box-shadow: 0 30px 50px -30px rgb(21 32 26 / 0.7)`): under the hero quick-book slab only.
 - **Stamp drop** (`box-shadow: 0 10px 24px -12px rgb(21 32 26 / 0.55)`): under the yellow seam stamp only.
+- **Hover lift** (`--shadow-lift`, `0 22px 40px -24px rgb(21 32 26 / 0.5)`): on court rows and gallery photos while hovered. It lives on an overlay pseudo-element that fades in by opacity; box-shadow is never animated.
 
 ### Named Rules
-**The Flat Paper Rule.** Surfaces on paper never cast shadows. A shadow is allowed only where an object overlaps the photo seam.
+**The Flat Paper Rule.** Surfaces on paper never cast shadows at rest. A shadow is allowed only where an object overlaps the photo seam, or briefly under a hovered court row or gallery photo as it lifts.
 
 ## Shapes
 
@@ -265,21 +266,21 @@ Square corners (0) on every button, field, tile, slab, card and photo. Round (50
 ## Components
 
 ### Buttons
-Square, confident, and always the same object: label plus a square-capped arrow that nudges 3px right on hover.
+Square, confident, and always the same object: label plus a square-capped arrow that nudges 3px right on hover, and a 3px accent bar that slides in from the left along the bottom edge on hover and keyboard focus (ball yellow on ink and ghost-light, ink on ball and ghost).
 - **Shape:** square corners (0); 56px tall with 28px side padding (large) or 48px with 22px (medium); Libre Franklin 600.
-- **Ink (primary on paper):** court ink fill, newsprint text; hovers to court blue. One per spread.
+- **Ink (primary on paper):** court ink fill, newsprint text; on hover it stays ink and the ball-yellow bar slides in. One per spread.
 - **Ball (primary on blue or ink):** ball yellow fill, ink text; hovers to ball yellow deep.
 - **Ghost (secondary on paper):** transparent with a 1.5px inset ink stroke; hovers to paper shade. Used for repeated per-item actions such as "Book Court N".
 - **Ghost Light (secondary on dark):** transparent with a 1.5px inset white stroke at 84%; hovers to full white stroke with a faint white wash.
-- **Focus:** 3px court blue outline offset 3px on paper; 3px ball yellow on dark grounds.
+- **Focus:** 3px ink outline offset 3px on paper; 3px ball yellow on dark grounds.
 - **Disabled / busy:** 45% / 70% opacity.
 
 ### Text Links
-Libre Franklin 600 with a 2px court-blue underline offset 6px; the text turns court blue on hover. On blue slabs the underline is white at 50% and turns ball yellow on hover.
+Libre Franklin 600 with a 2px court-blue underline offset 6px; on hover or focus the text turns court blue and a ball-yellow highlighter band slides in under it from the left. On blue slabs the underline is white at 50% and turns ball yellow on hover.
 
 ### Inputs / Fields
 - **Style:** white fill, 1.5px ink stroke, square, 52px minimum height, 17px text; custom ink chevron on selects.
-- **Focus:** the global 3px court blue outline.
+- **Focus:** the global 3px ink outline. Hover shifts the white fill to paper shade instantly; typing and errors are never animated.
 - **Error:** border and an inner 1px ring in error red, with a 14px 600 error line below.
 
 ### Choice Tiles
@@ -318,7 +319,8 @@ Every photo carries a 12px credit caption beneath it (or over its bottom-right c
 - **Do** switch to the ball button and the yellow focus ring on ink or court-blue grounds.
 - **Do** credit every photograph in a caption directly beneath it.
 - **Do** set prices, court numbers and step numbers in display caps with tabular figures.
-- **Do** honor prefers-reduced-motion: the line wipe, step slide and arrow nudge collapse to instant.
+- **Do** honor prefers-reduced-motion: every animation and transition is switched off, reveals show at once, and the hero photo neither zooms nor drifts.
+- **Do** animate only transform and opacity; draw underlines, bars and the progress fill with scaleX/scaleY.
 
 ### Don't:
 - **Don't** round corners on anything except the stamp and progress dots.

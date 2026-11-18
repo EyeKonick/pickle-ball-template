@@ -63,6 +63,13 @@ const schema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=1440" />
+    <!-- Motion: scroll-reveal hidden states apply only under .js. If reveal.ts hasn't run in 4s, show everything. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.dinkwellMotion) document.documentElement.classList.remove('js');
+      }, 4000);
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -89,5 +96,8 @@ const schema = {
   <body id="top">
     <a class="skip-link" href="#booking">Skip to booking</a>
     <slot />
+    <script>
+      import '../scripts/reveal';
+    </script>
   </body>
 </html>

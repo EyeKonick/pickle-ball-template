@@ -24,7 +24,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
   <div class="container">
     <SectionHeading id="booking-title" lines={copy.lines}>{copy.lede}</SectionHeading>
 
-    <div class="booking__layout" data-booking data-demo={bookingEndpointReady ? undefined : ''}>
+    <div class="booking__layout" data-booking data-demo={bookingEndpointReady ? undefined : ''} data-reveal>
       <ol class="progress" aria-label="Booking progress">
         {
           steps.formSteps.map((s, i) => (
@@ -310,7 +310,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     top: calc(var(--header-h) + var(--space-6));
     display: grid;
     gap: 0;
-    --fill: 0%;
+    --fill: 0;
   }
 
   .progress::before,
@@ -324,11 +324,12 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     background: var(--color-ink-faint);
   }
 
+  /* The ink fill scales down the track (transform only); booking.ts sets --fill from 0 to 1 */
   .progress::after {
-    bottom: auto;
-    height: calc((100% - 32px) * var(--fill) / 100);
     background: var(--color-ink);
-    transition: height 0.6s var(--ease-out);
+    transform: scaleY(var(--fill));
+    transform-origin: top center;
+    transition: transform var(--motion-fill) var(--ease-motion);
   }
 
   .progress li {
@@ -355,8 +356,8 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     font-weight: 700;
     color: var(--color-ink);
     transition:
-      background-color var(--duration-base) var(--ease-out),
-      color var(--duration-base) var(--ease-out);
+      background-color var(--motion-hover) var(--ease-motion),
+      color var(--motion-hover) var(--ease-motion);
   }
 
   .progress li[data-done] .progress__dot {
@@ -428,6 +429,21 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     background: var(--color-on-dark);
     font-size: 17px;
     color: var(--color-ink);
+    transition: background-color var(--motion-quick) var(--ease-motion);
+  }
+
+  @media (hover: hover) {
+    .field input:not([type='checkbox'], [type='file']):hover,
+    .field select:hover,
+    .field textarea:hover {
+      background-color: var(--color-paper-shade);
+    }
+  }
+
+  .field input:not([type='checkbox'], [type='file']):focus,
+  .field select:focus,
+  .field textarea:focus {
+    background-color: var(--color-on-dark);
   }
 
   .field select {
@@ -519,8 +535,8 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     background: var(--color-on-dark);
     cursor: pointer;
     transition:
-      background-color var(--duration-fast),
-      color var(--duration-fast);
+      background-color var(--motion-quick) var(--ease-motion),
+      color var(--motion-quick) var(--ease-motion);
   }
 
   .tiles--courts .tile {
@@ -549,8 +565,10 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     color: var(--color-ink-soft);
   }
 
-  .tile:hover {
-    background: var(--color-paper-shade);
+  @media (hover: hover) {
+    .tile:hover {
+      background: var(--color-paper-shade);
+    }
   }
 
   .tile:has(input:checked) {
@@ -697,11 +715,13 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     background: var(--color-on-dark);
     text-align: center;
     cursor: pointer;
-    transition: background-color var(--duration-fast);
+    transition: background-color var(--motion-quick) var(--ease-motion);
   }
 
-  .upload:hover {
-    background: var(--color-paper);
+  @media (hover: hover) {
+    .upload:hover {
+      background: var(--color-paper);
+    }
   }
 
   .upload:has(input:focus-visible) {
@@ -764,7 +784,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     display: grid;
     gap: var(--space-5);
     justify-items: start;
-    animation: pending-in 0.6s var(--ease-out);
+    animation: pending-in var(--motion-reveal) var(--ease-motion);
   }
 
   .pending__status {
@@ -865,7 +885,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
   @keyframes pending-in {
     from {
       opacity: 0.001;
-      transform: translateY(16px);
+      transform: translateY(var(--motion-distance));
     }
   }
 </style>

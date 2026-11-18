@@ -14,12 +14,18 @@ const hasLede = Astro.slots.has('default');
 ---
 
 <header class:list={['section-heading', `section-heading--${tone}`]}>
-  <h2 id={id} class="display">
-    {lines.map((line) => <span>{line}</span>)}
+  <h2 id={id} class="display" data-reveal="lines">
+    {
+      lines.map((line) => (
+        <span>
+          <span>{line}</span>
+        </span>
+      ))
+    }
   </h2>
   {
     hasLede && (
-      <div class="lede">
+      <div class="lede" data-reveal data-reveal-delay={lines.length}>
         <slot />
       </div>
     )
@@ -44,7 +50,7 @@ const hasLede = Astro.slots.has('default');
     font-size: var(--display-lg);
   }
 
-  h2 span {
+  h2 > span {
     display: block;
   }
 

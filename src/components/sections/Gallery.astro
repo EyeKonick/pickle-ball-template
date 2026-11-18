@@ -12,7 +12,7 @@ const items = galleryOrder.map((id) => photos[id]);
 <section class="gallery" id="gallery" aria-labelledby="gallery-title">
   <div class="container">
     <SectionHeading id="gallery-title" lines={site.sections.gallery.lines} />
-    <ul class="grid">
+    <ul class="grid" data-reveal="stagger">
       {
         items.map((photo) => {
           const wide = photo.src.width > photo.src.height;
@@ -20,14 +20,16 @@ const items = galleryOrder.map((id) => photos[id]);
           return (
             <li class:list={['item', { 'item--wide': wide }]}>
               <figure>
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  widths={[width, Math.min(width * 2, photo.src.width)]}
-                  sizes={`${width}px`}
-                  loading="lazy"
-                  style={`object-position: ${photo.focus}`}
-                />
+                <div class="frame">
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    widths={[width, Math.min(width * 2, photo.src.width)]}
+                    sizes={`${width}px`}
+                    loading="lazy"
+                    style={`object-position: ${photo.focus}`}
+                  />
+                </div>
                 <figcaption>
                   <span>{photo.caption}</span>
                   <a href={photo.creditUrl} target="_blank" rel="noopener noreferrer">
@@ -55,17 +57,65 @@ const items = galleryOrder.map((id) => photos[id]);
     margin-top: var(--space-8);
   }
 
+  .item {
+    --photo-h: 440px;
+  }
+
   .item--wide {
     grid-column: span 2;
   }
 
+  figure {
+    position: relative;
+  }
+
+  /* Hover lift: the shadow sits on an overlay under the photo and only fades (opacity) */
+  figure::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--photo-h);
+    box-shadow: var(--shadow-lift);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-hover) var(--ease-motion);
+  }
+
+  /* The frame clips the photo's hover zoom */
+  .frame {
+    position: relative;
+    overflow: hidden;
+  }
+
   figure img {
     width: 100%;
-    height: 440px;
+    height: var(--photo-h);
     object-fit: cover;
+    transition: transform var(--motion-hover) var(--ease-motion);
+  }
+
+  @media (hover: hover) {
+    .item {
+      transition: transform var(--motion-hover) var(--ease-motion);
+    }
+
+    .item:hover figure::before {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .item:hover {
+      transform: translateY(calc(var(--motion-lift) * -1));
+    }
+
+    .item:hover img {
+      transform: scale(var(--motion-zoom));
+    }
   }
 
   figcaption {
+    position: relative; /* paints above the lift shadow */
     display: grid;
     gap: 2px;
     padding-top: var(--space-2);
@@ -82,7 +132,13 @@ const items = galleryOrder.map((id) => photos[id]);
     text-underline-offset: 3px;
   }
 
-  figcaption a:hover {
-    color: var(--color-court);
+  figcaption a {
+    transition: color var(--motion-hover) var(--ease-motion);
+  }
+
+  @media (hover: hover) {
+    figcaption a:hover {
+      color: var(--color-court);
+    }
   }
 </style>

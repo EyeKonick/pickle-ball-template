@@ -12,17 +12,35 @@ const photo = photos['player-with-paddle'];
 
 <section class="about on-dark" id="about" aria-labelledby="about-title">
   <div class="container about__inner">
-    <figure class="about__photo">
-      <Image src={photo.src} alt={photo.alt} widths={[440, 660, 880]} sizes="440px" loading="lazy" style={`object-position: ${photo.focus}`} />
+    <figure class="about__photo" data-reveal>
+      <div class="frame">
+        <Image src={photo.src} alt={photo.alt} widths={[440, 660, 880]} sizes="440px" loading="lazy" style={`object-position: ${photo.focus}`} />
+      </div>
       <figcaption>Photo: {photo.credit}</figcaption>
     </figure>
     <div class="about__copy">
-      <h2 id="about-title" class="display">
-        {copy.lines.map((line) => <span>{line}</span>)}
+      <h2 id="about-title" class="display" data-reveal="lines">
+        {
+          copy.lines.map((line) => (
+            <span>
+              <span>{line}</span>
+            </span>
+          ))
+        }
       </h2>
-      {copy.paragraphs.map((p) => <p>{p}</p>)}
-      <p class="about__sign display">{site.tagline}</p>
-      <Button href="#booking" variant="ball">{site.cta.book}</Button>
+      {
+        copy.paragraphs.map((p, i) => (
+          <p data-reveal data-reveal-delay={copy.lines.length + i}>
+            {p}
+          </p>
+        ))
+      }
+      <p class="about__sign display" data-reveal data-reveal-delay={copy.lines.length + copy.paragraphs.length}>
+        {site.tagline}
+      </p>
+      <Button href="#booking" variant="ball" data-reveal="" data-reveal-delay={String(copy.lines.length + copy.paragraphs.length + 1)}>
+        {site.cta.book}
+      </Button>
     </div>
   </div>
 </section>
@@ -46,10 +64,23 @@ const photo = photos['player-with-paddle'];
     height: 600px;
   }
 
+  /* The frame clips the photo's hover zoom */
+  .frame {
+    height: 100%;
+    overflow: hidden;
+  }
+
   .about__photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform var(--motion-hover) var(--ease-motion);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .about__photo:hover img {
+      transform: scale(var(--motion-zoom));
+    }
   }
 
   .about__photo figcaption {
@@ -70,7 +101,7 @@ const photo = photos['player-with-paddle'];
     margin-bottom: var(--space-2);
   }
 
-  h2 span {
+  h2 > span {
     display: block;
   }
 

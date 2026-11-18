@@ -25,8 +25,9 @@ const hasActions = Astro.slots.has('actions');
 </section>
 
 <style>
+  /* Each step fades in with a short slide from the right when it becomes visible */
   .step {
-    animation: step-in 0.45s var(--ease-out);
+    animation: step-in var(--motion-step) var(--ease-motion);
   }
 
   h3 {
@@ -54,7 +55,7 @@ const hasActions = Astro.slots.has('actions');
   @keyframes step-in {
     from {
       opacity: 0.001;
-      transform: translateX(18px);
+      transform: translateX(var(--motion-distance-x));
     }
   }
 </style>

@@ -1,0 +1,163 @@
+---
+/** Key for the court map: each status by color, pattern and label, plus the selected court. */
+const items = [
+  { status: 'available', label: 'Open', note: 'Free for your whole time' },
+  { status: 'pending', label: 'Pending', note: 'Held for a request awaiting staff confirmation' },
+  { status: 'booked', label: 'Booked', note: 'Confirmed for another player' },
+  { status: 'closed', label: 'Closed', note: 'Not open at this time' },
+  { status: 'selected', label: 'Your court', note: 'The court in your request' },
+];
+---
+
+<div class="legend">
+  <p class="legend__title">Key</p>
+  <ul>
+    {
+      items.map((item) => (
+        <li>
+          <svg class={`swatch swatch--${item.status}`} viewBox="-3 -3 20 30" aria-hidden="true">
+            {item.status === 'pending' && (
+              <defs>
+                <pattern id="lg-hatch" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                  <rect class="hatch-ground" width="2.4" height="2.4" />
+                  <line class="hatch-line" x1="0" y1="0" x2="0" y2="2.4" />
+                </pattern>
+              </defs>
+            )}
+            {item.status === 'selected' && <rect class="ring-edge" x="-2.2" y="-2.2" width="18.4" height="28.4" />}
+            {item.status === 'selected' && <rect class="ring" x="-1.2" y="-1.2" width="16.4" height="26.4" />}
+            <rect class="surface" width="14" height="24" />
+            <path class="lines" d="M0 12H14" />
+            {item.status === 'selected' && <path class="check" d="M4.2 12.2L6.2 14.3L10 10.2" />}
+          </svg>
+          <span class="legend__label">{item.label}</span>
+          <span class="legend__note">{item.note}</span>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="legend__source" data-map-source>Sample availability for the demo.</p>
+</div>
+
+<style>
+  .legend {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .legend__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  ul {
+    display: grid;
+    border-top: var(--rule);
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    column-gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: var(--rule-thin);
+  }
+
+  .swatch {
+    grid-row: span 2;
+    width: 1.25rem;
+    height: auto;
+    overflow: visible;
+  }
+
+  .legend__label {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .legend__note {
+    font-size: var(--text-xs);
+    line-height: 1.35;
+    color: var(--color-ink-soft);
+  }
+
+  .legend__source {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+  }
+
+  .surface {
+    stroke: var(--color-ink);
+    stroke-width: 0.8;
+  }
+
+  .lines {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.2;
+  }
+
+  .hatch-ground {
+    fill: var(--color-sand);
+  }
+
+  .hatch-line {
+    stroke: var(--color-hatch);
+    stroke-width: 0.9;
+  }
+
+  .swatch--available .surface,
+  .swatch--selected .surface {
+    fill: var(--color-ball);
+  }
+
+  .swatch--pending .surface {
+    fill: url(#lg-hatch);
+  }
+
+  .swatch--booked .surface {
+    fill: var(--color-ink);
+  }
+
+  .swatch--booked .lines {
+    stroke: rgb(239 232 216 / 0.45);
+  }
+
+  .swatch--closed .surface {
+    fill: var(--color-paper);
+    stroke: var(--color-closed);
+    stroke-dasharray: 2.2 1.4;
+  }
+
+  .swatch--closed .lines {
+    stroke: rgb(107 116 110 / 0.55);
+  }
+
+  .swatch--selected .lines {
+    display: none;
+  }
+
+  .ring {
+    fill: none;
+    stroke: var(--color-ball);
+    stroke-width: 1.8;
+  }
+
+  .ring-edge {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 0.6;
+  }
+
+  .check {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.6;
+    stroke-linecap: square;
+  }
+</style>

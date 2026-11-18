@@ -7,15 +7,17 @@
 import { Image } from 'astro:assets';
 import { site, bookingEndpointReady } from '../../data/site-config';
 import steps from '../../data/booking-steps.json';
-import { courtChoices, groups, startHours } from '../../utils/slots';
-import { formatHourShort, toTimeValue } from '../../utils/format';
+import { courts, groupName, startHours } from '../../utils/slots';
+import { formatHour, toTimeValue } from '../../utils/format';
 import qrSample from '../../assets/images/payment/gcash-qr-sample.svg';
 import BookingStep from '../ui/BookingStep.astro';
 import Button from '../ui/Button.astro';
+import CourtMap from '../ui/CourtMap.astro';
+import CourtSummary from '../ui/CourtSummary.astro';
+import TimeScrubber from '../ui/TimeScrubber.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 
 const copy = site.sections.booking;
-const groupName = (id: string) => groups.find((g) => g.id === id)?.name ?? '';
 const players = Array.from({ length: site.booking.maxPlayers }, (_, i) => i + 1);
 const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) => i + 1);
 ---
@@ -24,7 +26,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
   <div class="container">
     <SectionHeading id="booking-title" lines={copy.lines}>{copy.lede}</SectionHeading>
 
-    <div class="booking__layout" data-booking data-demo={bookingEndpointReady ? undefined : ''} data-reveal>
+    <div class="booking__layout" data-booking data-step="slot" data-demo={bookingEndpointReady ? undefined : ''} data-reveal>
       <ol class="progress" aria-label="Booking progress">
         {
           steps.formSteps.map((s, i) => (
@@ -40,28 +42,17 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
 
       <form class="booking__form" novalidate data-booking-form aria-labelledby="booking-title">
         <BookingStep id="slot" number={1} title="Choose your court and time">
-          <fieldset class="group">
-            <legend>Court</legend>
-            <div class="tiles tiles--courts">
-              {
-                courtChoices.map((choice, i) => (
-                  <label class="tile">
-                    <input type="radio" name="court" value={choice.id} checked={i === 0} />
-                    <span class="tile__main">{choice.label}</span>
-                    <span class="tile__sub">
-                      {choice.courtIds.length > 1 ? `Any free court, ${groupName(choice.group).toLowerCase()}` : groupName(choice.group)}
-                    </span>
-                  </label>
-                ))
-              }
-            </div>
-          </fieldset>
-
-          <div class="row">
+          <div class="controls">
             <div class="field">
               <label for="bk-date">Date</label>
               <input id="bk-date" name="date" type="date" required aria-describedby="bk-date-error" />
               <p class="field__error" id="bk-date-error" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="bk-start">Start time</label>
+              <select id="bk-start" name="start" required>
+                {startHours.map((h) => <option value={toTimeValue(h)} selected={h === 19}>{formatHour(h)}</option>)}
+              </select>
             </div>
             <fieldset class="group">
               <legend>Duration</legend>
@@ -80,25 +71,32 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
             </fieldset>
           </div>
 
-          <fieldset class="group" aria-describedby="bk-slot-help bk-slot-error">
-            <legend>Start time</legend>
-            <p class="help" id="bk-slot-help">Greyed-out times are already taken or have passed.</p>
-            <div class="tiles tiles--slots" data-slots>
+          <TimeScrubber />
+          <CourtMap />
+          <CourtSummary />
+
+          <fieldset class="group" aria-describedby="bk-court-help bk-court-error">
+            <legend>Court</legend>
+            <p class="help" id="bk-court-help">Pick on the map or here. Struck-out courts are not open for your whole time.</p>
+            <div class="tiles tiles--courts">
               {
-                startHours.map((h) => (
-                  <label class="tile tile--slot">
-                    <input type="radio" name="start" value={toTimeValue(h)} />
-                    <span class="tile__main tabular">{formatHourShort(h)}</span>
+                courts.map((court) => (
+                  <label class="tile">
+                    <input type="radio" name="court" value={court.id} />
+                    <span class="tile__main">{court.name}</span>
+                    <span class="tile__sub" data-tile-status={court.id}>
+                      {groupName(court.group)}
+                    </span>
                   </label>
                 ))
               }
             </div>
-            <p class="field__error" id="bk-slot-error" aria-live="polite"></p>
+            <p class="field__error" id="bk-court-error" aria-live="polite"></p>
           </fieldset>
 
           <Fragment slot="actions">
             <span></span>
-            <Button data-next>Next: your details</Button>
+            <Button data-next>Continue to your details</Button>
           </Fragment>
         </BookingStep>
 
@@ -286,6 +284,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
 
 <script>
   import '../../scripts/booking';
+  import '../../scripts/court-map';
 </script>
 
 <style>
@@ -302,6 +301,15 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     gap: var(--space-8);
     align-items: start;
     margin-top: var(--space-8);
+  }
+
+  /* Step 1 holds the court map, so the form takes the ticket's column; the map's own summary stands in for the ticket */
+  .booking__layout[data-step='slot'] {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .booking__layout[data-step='slot'] .ticket {
+    display: none;
   }
 
   /* Progress rail */
@@ -512,16 +520,19 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     gap: var(--space-2);
   }
 
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: var(--space-5);
+    align-items: start;
+  }
+
   .tiles--courts {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
   }
 
   .tiles--duration {
     grid-template-columns: repeat(3, 1fr);
-  }
-
-  .tiles--slots {
-    grid-template-columns: repeat(6, 1fr);
   }
 
   .tile {
@@ -543,8 +554,7 @@ const durations = Array.from({ length: site.booking.maxDurationHours }, (_, i) =
     min-height: 68px;
   }
 
-  .tile--compact,
-  .tile--slot {
+  .tile--compact {
     justify-items: center;
     text-align: center;
   }

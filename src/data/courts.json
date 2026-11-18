@@ -1,5 +1,5 @@
 {
-  "_comment": "SAMPLE: replace per client. Courts, groups and rates for the Courts & Rates section and the booking form. All rates below are SAMPLE rates.",
+  "_comment": "SAMPLE: replace per client. Courts, groups, rates and the floor plan for the Courts & Rates section, the court map and the booking form. All rates below are SAMPLE rates.",
   "groups": [
     {
       "id": "indoor",
@@ -20,14 +20,28 @@
       "image": "covered-court-volley"
     }
   ],
+  "_courtsComment": "group = the zone the court sits in (indoor or outdoor); rate = which entry in 'rates' it is charged at; map = the court's top-left corner on the floor plan (see 'map').",
   "courts": [
-    { "id": "court-1", "number": 1, "name": "Court 1", "group": "indoor", "description": "Good for early doubles before work, with off-peak rates on weekday mornings." },
-    { "id": "court-2", "number": 2, "name": "Court 2", "group": "indoor", "description": "Pair it with Court 1 when your group is too big for one court." },
-    { "id": "court-3", "number": 3, "name": "Court 3", "group": "indoor", "description": "Same lines and rate as the other indoor courts, kept clear of the rain." },
-    { "id": "court-4", "number": 4, "name": "Court 4", "group": "indoor", "description": "Bookable from the 6 AM slot through the last start at 10 PM." },
-    { "id": "court-5", "number": 5, "name": "Court 5", "group": "outdoor", "description": "Open air under a roof, so a drizzle doesn't end the game." },
-    { "id": "court-6", "number": 6, "name": "Court 6", "group": "outdoor", "description": "Same roof and rate as Court 5, a good pair for a group of eight." }
+    { "id": "court-1", "number": 1, "name": "Court 1", "group": "indoor", "rate": "indoor", "map": { "x": 17, "y": 28 }, "description": "Good for early doubles before work, with off-peak rates on weekday mornings." },
+    { "id": "court-2", "number": 2, "name": "Court 2", "group": "indoor", "rate": "indoor", "map": { "x": 47, "y": 28 }, "description": "Pair it with Court 1 when your group is too big for one court." },
+    { "id": "court-3", "number": 3, "name": "Court 3", "group": "indoor", "rate": "indoor", "map": { "x": 77, "y": 28 }, "description": "Same lines and rate as the other indoor courts, kept clear of the rain." },
+    { "id": "court-4", "number": 4, "name": "Court 4", "group": "indoor", "rate": "indoor", "map": { "x": 107, "y": 28 }, "description": "Bookable from the 6 AM slot through the last start at 10 PM." },
+    { "id": "court-5", "number": 5, "name": "Court 5", "group": "outdoor", "rate": "outdoor", "map": { "x": 160, "y": 28 }, "description": "Open air under a roof, so a drizzle doesn't end the game." },
+    { "id": "court-6", "number": 6, "name": "Court 6", "group": "outdoor", "rate": "outdoor", "map": { "x": 188, "y": 28 }, "description": "Same roof and rate as Court 5, a good pair for a group of eight." }
   ],
+  "map": {
+    "_comment": "SAMPLE floor plan for the court map in Booking step 1. Units are roughly feet, (0,0) is the top-left corner. Every court is drawn court.width x court.length (pickleball is 20 x 44 ft) from its map.x / map.y. Zones are the labelled areas; 'group' must match a group id, and covered zones get a dashed roof line. The building is the solid outer wall; the entrance is a gap in its bottom wall, starting at entrance.x. When you move things, keep everything inside width x height.",
+    "width": 224,
+    "height": 122,
+    "court": { "width": 20, "length": 44 },
+    "building": { "x": 4, "y": 4, "width": 136, "height": 104 },
+    "zones": [
+      { "group": "indoor", "x": 4, "y": 4, "width": 136, "height": 80, "covered": false },
+      { "group": "outdoor", "x": 148, "y": 4, "width": 72, "height": 80, "covered": true }
+    ],
+    "reception": { "x": 14, "y": 92, "width": 38, "height": 10 },
+    "entrance": { "x": 92, "width": 20 }
+  },
   "rates": {
     "_comment": "SAMPLE rates: replace per client. Amounts are PHP per court, per hour. Off-peak applies to start hours >= fromHour and < toHour on the listed days (0 = Sunday).",
     "indoor": {

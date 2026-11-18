@@ -37,6 +37,13 @@ const RAW = {
    * While unfilled, the booking form runs in demo mode and sends nothing.
    */
   bookingEndpoint: env.PUBLIC_BOOKING_ENDPOINT || 'BOOKING_ENDPOINT_TO_FILL', // SAMPLE: replace per client
+
+  /**
+   * URL that returns live court availability as JSON, in the same shape as src/data/availability.json
+   * (see README, "Court availability"). Set PUBLIC_AVAILABILITY_ENDPOINT in .env, or replace the placeholder.
+   * While unfilled, the court map and form use the SAMPLE data in availability.json.
+   */
+  availabilityEndpoint: env.PUBLIC_AVAILABILITY_ENDPOINT || 'AVAILABILITY_ENDPOINT_TO_FILL', // SAMPLE: replace per client
 };
 
 const ADDRESS = {
@@ -115,6 +122,7 @@ export const site = {
     maxPlayers: 8, // SAMPLE: replace per client
     maxUploadMB: 5,
     endpoint: RAW.bookingEndpoint,
+    availabilityEndpoint: RAW.availabilityEndpoint,
   },
 
   /** Unfilled Facebook/Messenger links fall back to a Facebook search for the club so they still work. */
@@ -191,6 +199,9 @@ export const siteUrl = filledOr(RAW.domain, 'https://www.dinkwellpickleball.ph')
 
 /** True when the booking endpoint is a real URL; otherwise the form runs in demo mode. */
 export const bookingEndpointReady = /^https:\/\//.test(site.booking.endpoint);
+
+/** True when live availability should be fetched; otherwise the sample availability.json is used. */
+export const availabilityEndpointReady = /^https:\/\//.test(site.booking.availabilityEndpoint);
 
 /** Named placeholders that still need real values (printed during the build). */
 export const unfilledPlaceholders = Object.entries(RAW)

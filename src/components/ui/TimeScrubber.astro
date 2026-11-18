@@ -1,0 +1,151 @@
+---
+/**
+ * Hour scrubber: one column per start hour from opening to the last start, showing how many courts are
+ * open for the chosen duration from that hour. Clicking a column sets the start time in the form.
+ * It mirrors the start-time select (which carries the same counts for screen readers), so it is hidden
+ * from assistive tech and kept out of the tab order. src/scripts/court-map.ts fills it in.
+ */
+import { site } from '../../data/site-config';
+import { startHours } from '../../utils/slots';
+import { formatHourShort } from '../../utils/format';
+---
+
+<div class="scrub" aria-hidden="true" hidden data-map-only data-scrubber>
+  <p class="scrub__title">Open courts by start time <span class="scrub__for" data-scrub-for></span></p>
+  <div class="scrub__track">
+    {
+      startHours.map((h) => (
+        <button type="button" class="scrub__hour" tabindex="-1" data-scrub-hour={h}>
+          <span class="scrub__count tabular" data-scrub-count />
+          <span class="scrub__bar">
+            <span class="scrub__fill" />
+          </span>
+          <span class="scrub__time">{formatHourShort(h)}</span>
+        </button>
+      ))
+    }
+    <span class="scrub__close">{formatHourShort(site.hours.closeHour)}</span>
+  </div>
+</div>
+
+<style>
+  .scrub {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .scrub__title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .scrub__for {
+    font-weight: 400;
+    color: var(--color-ink-soft);
+  }
+
+  .scrub__track {
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    border-top: var(--rule-thin);
+    border-bottom: var(--rule);
+  }
+
+  .scrub__hour {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1.75rem auto;
+    justify-items: center;
+    gap: 3px;
+    padding: var(--space-1) 0 var(--space-2);
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    cursor: pointer;
+    transition: background-color var(--motion-quick) var(--ease-motion);
+  }
+
+  /* Each column starts on a faint tick */
+  .scrub__hour::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0.4rem;
+    border-left: var(--rule-thin);
+  }
+
+  .scrub__count {
+    font-size: var(--text-xs);
+    font-weight: 700;
+  }
+
+  .scrub__bar {
+    position: relative;
+    width: 0.625rem;
+    height: 100%;
+    background: var(--color-paper-shade);
+  }
+
+  .scrub__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-ink);
+    transform: scaleY(var(--v, 0));
+    transform-origin: bottom center;
+    transition: transform var(--motion-hover) var(--ease-motion);
+  }
+
+  .scrub__time {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-ink-soft);
+    white-space: nowrap;
+  }
+
+  @media (hover: hover) {
+    .scrub__hour:hover {
+      background: var(--color-paper-shade);
+    }
+  }
+
+  /* The hours your request covers: ink band, lime bars */
+  .scrub__hour[data-in-range] {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .scrub__hour[data-in-range] .scrub__bar {
+    background: rgb(239 232 216 / 0.18);
+  }
+
+  .scrub__hour[data-in-range] .scrub__fill {
+    background: var(--color-ball);
+  }
+
+  .scrub__hour[data-in-range] .scrub__time {
+    color: var(--color-paper);
+  }
+
+  /* Starts that are past or run past closing */
+  .scrub__hour:disabled {
+    cursor: not-allowed;
+  }
+
+  .scrub__hour:disabled:not([data-in-range]) .scrub__count {
+    color: var(--color-ink-soft);
+    font-weight: 500;
+  }
+
+  .scrub__close {
+    position: absolute;
+    right: 0;
+    bottom: calc(-1 * var(--space-5));
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-ink-soft);
+  }
+</style>

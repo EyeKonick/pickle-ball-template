@@ -11,6 +11,10 @@
   --color-court-hover: #1b4593;
   --color-ball: #e6f14a; /* ball yellow: highlighter, stamp, action on blue */
   --color-ball-deep: #d6e332;
+  /* Court map states (Booking step 1). Open courts use --color-ball, booked use --color-ink. */
+  --color-sand: #dccaa0; /* pending court fill */
+  --color-hatch: rgb(21 32 26 / 0.32); /* pending court diagonal hatch */
+  --color-closed: #6b746e; /* closed court dashed outline and lines, 3.9:1 on paper */
   --color-on-dark: #ffffff;
   --color-on-dark-soft: rgb(255 255 255 / 0.84);
   --color-error: #a3261b;

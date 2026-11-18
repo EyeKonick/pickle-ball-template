@@ -12,6 +12,8 @@ export interface BookingPrefill {
 }
 
 export const PREFILL_EVENT = 'booking:prefill';
+/** Fired on the booking root after booking.ts has processed a change to the form state; the court map re-renders on it. */
+export const STATE_EVENT = 'booking:state';
 const KEYS: (keyof BookingPrefill)[] = ['court', 'date', 'time', 'hours'];
 
 export const readPrefill = (search: string): BookingPrefill => {

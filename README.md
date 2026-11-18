@@ -34,18 +34,19 @@ Requires Node 22.12 or newer.
     │   └── brand/          put logo.svg here (see "Logo" below)
     ├── components/
     │   ├── sections/       Header, Hero, CourtsRates, HowItWorks, Booking, About, Gallery, Location, Footer
-    │   └── ui/             Button, SectionHeading, CourtCard, BookingStep, Wordmark
+    │   └── ui/             Button, SectionHeading, CourtCard, BookingStep, Wordmark,
+    │                       CourtMap, MapLegend, TimeScrubber, CourtSummary (the court map in booking step 1)
     ├── data/
     │   ├── site-config.ts  club details, links, GCash, policy, section copy, booking data model
-    │   ├── courts.json     courts, groups and SAMPLE rates
-    │   ├── availability.json  SAMPLE taken slots
+    │   ├── courts.json     courts, groups, SAMPLE rates and the floor plan for the court map
+    │   ├── availability.json  SAMPLE per-court, per-date, per-hour availability (demo only)
     │   ├── booking-steps.json "How booking works" steps and form progress labels
     │   └── photos.ts       every photo with alt text, caption, credit and crop focus
     ├── layouts/BaseLayout.astro  head, meta, Open Graph, schema.org, fonts
     ├── pages/index.astro
-    ├── scripts/            booking.ts (form), booking-link.ts (deep links), quickbook.ts (hero strip)
+    ├── scripts/            booking.ts (form), court-map.ts (court map), booking-link.ts (deep links), quickbook.ts (hero strip)
     ├── styles/             tokens.css (design tokens), global.css (reset and base type)
-    └── utils/              format, slots (availability and pricing), validation, booking-code
+    └── utils/              format, slots (courts and pricing), availability (court status), validation, booking-code
 ```
 
 ## Where to edit
@@ -58,7 +59,9 @@ Requires Node 22.12 or newer.
 | Cancellation and reschedule policy, confirmation wording | `src/data/site-config.ts` → `policy` |
 | Section headlines and intro text | `src/data/site-config.ts` → `sections` |
 | Courts, court descriptions, rates and off-peak window | `src/data/courts.json` |
-| Taken slots (sample availability) | `src/data/availability.json` |
+| Court map floor plan (court positions, zones, reception, entrance) | `src/data/courts.json` → `map` and each court's `map` |
+| Sample availability (open, pending, booked, closed) | `src/data/availability.json` |
+| Live availability URL | `src/data/site-config.ts` → `AVAILABILITY_ENDPOINT_TO_FILL`, or `PUBLIC_AVAILABILITY_ENDPOINT` in `.env` |
 | "How booking works" steps | `src/data/booking-steps.json` |
 | Photos, alt text, captions, credits | `src/data/photos.ts` + files in `src/assets/images/` |
 | Colors, type scale, spacing | `src/styles/tokens.css` |
@@ -74,7 +77,7 @@ All six photos are free-license stand-ins from Unsplash and Pexels (credits are 
 
 ## Booking flow
 
-1. Court & time: a specific court or "Any indoor / Any outdoor", date, start time, 1–3 hours. Taken slots come from `availability.json`; past hours today are always unavailable.
+1. Court & time: date, start time and 1–3 hours, then a court picked on the court map (or in the court list under it). A court is open only if it is free for the whole duration. Past hours today are always unavailable.
 2. Your details: name, Philippine mobile number (`09XX…` or `+639…`), email, players, notes.
 3. Review: summary, total, policy, and an "I agree" checkbox.
 4. Pay via GCash: QR, account name and number, and the exact amount.
@@ -83,7 +86,33 @@ All six photos are free-license stand-ins from Unsplash and Pexels (credits are 
 
 The site only ever creates bookings with status **Pending Review**. The full status list (`Draft`, `Pending Review`, `Confirmed`, `Rejected`, `Expired`, `Cancelled`) and the Sheet columns (`SHEET_COLUMNS`) are exported from `site-config.ts`. Staff review happens in the Google Sheet, outside this site.
 
-Deep links prefill step 1: `/?court=court-3&date=2026-11-21&time=19:00&hours=2#booking`. The hero strip and the court cards use the same links.
+Deep links prefill step 1: `/?court=court-3&date=2026-11-21&time=19:00&hours=2#booking`. The hero strip and the court cards use the same links. The hero strip sends a court type (`court=any-indoor` or `any-outdoor`), which highlights that zone on the map.
+
+## Court map and availability
+
+The top of booking step 1 is a bird's-eye floor plan drawn as inline SVG from `src/data/courts.json`. Each court shows Open, Pending, Booked or Closed for the chosen date, start time and duration. Clicking an open court picks it in the form, and picking a court in the form highlights it on the map. Without JavaScript, a plain table of courts shows instead.
+
+**Edit the layout** in `courts.json`:
+
+- Each court's `map: { "x", "y" }` is the top-left corner of the court on the plan. Units are roughly feet, and every court is drawn `map.court.width` × `map.court.length` (20 × 44, pickleball proportions).
+- `map.zones` are the labelled areas. `group` must match a group id, and `covered: true` draws a dashed roof line. The zone label and "Courts 1–4" line come from that group.
+- `map.building` is the outer wall, `map.entrance.x` and `width` are the doorway gap in its bottom wall, and `map.reception` is the desk.
+- `map.width` and `map.height` are the size of the whole plan. Keep everything inside them.
+- To add or remove a court, add or remove it in `courts` (with `group`, `rate` and `map`). The map, legend, scrubber counts and court list all follow.
+
+**Edit the sample availability** in `src/data/availability.json`. Under `dates`, each date lists, per court, the start hours that are *not* available, by status:
+
+```json
+"2026-11-21": {
+  "court-3": { "booked": [19, 20], "pending": [18], "closed": [6, 7] }
+}
+```
+
+Any hour not listed is open. `pending` is a request in **Pending Review** (awaiting staff confirmation), `booked` is **Confirmed**, and `closed` means the court isn't open (maintenance, a private event). Dates that aren't listed copy a sample date by weekday through `weekly` (`0` = Sunday), so the demo keeps working after the sample dates. All status logic is in one function, `courtStatus()` in `src/utils/availability.ts`, used by both the map and the form.
+
+> **The sample availability is for the demo only.** Real availability must come from the same place that stores the bookings (the Google Sheet behind the booking endpoint, or whatever replaces it), so two customers can never book the same slot. A static file can't know about a booking made a minute ago.
+
+**Live availability:** set `PUBLIC_AVAILABILITY_ENDPOINT` in `.env` (or replace `AVAILABILITY_ENDPOINT_TO_FILL` in `site-config.ts`) to a URL that returns JSON in the same shape as `availability.json` (at least `dates`). The page fetches it on load. If it is unset, or the request fails, the page uses the sample data, and the map's legend notes that the availability is a sample. For example, an Apps Script `doGet` can read the Sheet and return each future booking's hours, with *Pending Review* rows as `pending` and *Confirmed* rows as `booked`. Even then, the Apps Script that receives a booking should re-check that the slot is still free before it appends the row.
 
 ## Connect the Google Sheet
 
@@ -145,7 +174,7 @@ While no endpoint is set, the form runs in **demo mode**: it simulates a success
 
 `npm run build` produces a static site in `dist/`. Upload it to any static host: Netlify, Vercel, Cloudflare Pages, GitHub Pages or your own server.
 
-- Set `PUBLIC_BOOKING_ENDPOINT` in the host's environment variables (it's read at build time).
+- Set `PUBLIC_BOOKING_ENDPOINT` (and `PUBLIC_AVAILABILITY_ENDPOINT` once you have one) in the host's environment variables. They're read at build time.
 - Fill in `PRODUCTION_DOMAIN_TO_FILL` in `site-config.ts` so the canonical and Open Graph URLs point to the real domain.
 
 ## SEO

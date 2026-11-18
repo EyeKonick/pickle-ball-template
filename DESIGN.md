@@ -302,6 +302,9 @@ Square ink (rate card) or court-blue (callout) panels with 48px padding, white d
 ### Booking Progress Rail and Ticket
 A vertical 2px faint track that fills ink as steps complete; 32px round dots outlined in ink, filled ink when done, filled ball yellow when current. The ticket is a sticky white slip with a 1.5px ink border, a dashed rule under its display-caps title, faint-ruled rows and a 56px display total.
 
+### Court Map (Booking step 1)
+A flat bird's-eye floor plan in inline SVG: a heavy ink building wall with an entrance gap and a reception desk, a dashed roof line around the covered outdoor zone, and display-caps zone labels. Courts are drawn to pickleball proportions (20 × 44) with thin ink lines and a large display numeral knocked out of its surface. Every state has a color, a pattern and a label: **Open** is a ball-yellow surface (the one place yellow fills a shape, because it marks the action), **Pending** is sand (`--color-sand`) with a diagonal hatch (`--color-hatch`), **Booked** is solid ink with paper numerals, **Closed** is paper with a dashed grey outline (`--color-closed`). The selected court gets a ball-yellow outline edged in ink and an ink check disc. A highlighted zone gets a paper-shade wash and a ball-yellow highlighter band behind its label. Beside it sits a ruled key; above it a slim hour scrubber of ink bars (the hours in the request invert to ink with yellow bars); below it a white summary slip with a dashed tear edge and a 56px display total. States cross-fade (`--motion-hover`), open courts lift on hover with a faded overlay shadow, and courts fade up once in a zone-by-zone stagger.
+
 ### Navigation
 Masthead links in Libre Franklin 500 at 15px; a 2px ink underline draws in from the left on hover. Club facts follow as plain ink-soft text divided by faint vertical rules, then a medium ink button without arrow.
 

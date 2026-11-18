@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480" role="img" aria-labelledby="t">
+  <title id="t">SAMPLE QR: replace with the club's GCash QR</title>
+  <!-- SAMPLE QR: replace with the club's GCash QR. This image is intentionally not a scannable code. -->
+  <rect width="480" height="480" fill="#FFFFFF"/>
+  <rect x="12" y="12" width="456" height="456" fill="none" stroke="#15201A" stroke-width="3" stroke-dasharray="14 10"/>
+  <text x="240" y="214" text-anchor="middle" font-family="Arial Narrow, Arial, sans-serif" font-weight="700" font-size="58" fill="#15201A" letter-spacing="2">SAMPLE QR</text>
+  <text x="240" y="262" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#46524B">Replace with the club's</text>
+  <text x="240" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#46524B">GCash QR code</text>
+</svg>

@@ -1,0 +1,61 @@
+---
+/**
+ * Section opener: ink rule, oversized condensed headline on the left, lede on the right.
+ * Pass `lines` to control the headline's line breaks.
+ */
+interface Props {
+  id: string;
+  lines: readonly string[];
+  tone?: 'paper' | 'dark';
+}
+
+const { id, lines, tone = 'paper' } = Astro.props;
+const hasLede = Astro.slots.has('default');
+---
+
+<header class:list={['section-heading', `section-heading--${tone}`]}>
+  <h2 id={id} class="display">
+    {lines.map((line) => <span>{line}</span>)}
+  </h2>
+  {
+    hasLede && (
+      <div class="lede">
+        <slot />
+      </div>
+    )
+  }
+</header>
+
+<style>
+  .section-heading {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    align-items: end;
+    gap: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: var(--rule);
+  }
+
+  .section-heading--dark {
+    border-top-color: var(--color-on-dark);
+  }
+
+  h2 {
+    font-size: var(--display-lg);
+  }
+
+  h2 span {
+    display: block;
+  }
+
+  .lede {
+    padding-bottom: var(--space-2);
+    font-size: var(--text-md);
+    line-height: var(--leading-body);
+    text-wrap: pretty;
+  }
+
+  .section-heading--dark .lede {
+    color: var(--color-on-dark-soft);
+  }
+</style>

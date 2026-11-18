@@ -1,0 +1,43 @@
+{
+  "_comment": "SAMPLE: replace per client. Courts, groups and rates for the Courts & Rates section and the booking form. All rates below are SAMPLE rates.",
+  "groups": [
+    {
+      "id": "indoor",
+      "name": "Indoor",
+      "shortName": "Indoor",
+      "countLabel": "4 courts",
+      "courtsLabel": "Courts 1–4",
+      "summary": "Out of the sun and the rain. Four courts that play the same at 2 PM in July as they do at 10 PM in a downpour.",
+      "image": "indoor-rally-green-wall"
+    },
+    {
+      "id": "outdoor",
+      "name": "Covered Outdoor",
+      "shortName": "Outdoor",
+      "countLabel": "2 covered",
+      "courtsLabel": "Courts 5–6",
+      "summary": "Open air under a roof. Two courts for players who like a breeze, with cover when the afternoon rain comes in.",
+      "image": "covered-court-volley"
+    }
+  ],
+  "courts": [
+    { "id": "court-1", "number": 1, "name": "Court 1", "group": "indoor", "description": "Good for early doubles before work, with off-peak rates on weekday mornings." },
+    { "id": "court-2", "number": 2, "name": "Court 2", "group": "indoor", "description": "Pair it with Court 1 when your group is too big for one court." },
+    { "id": "court-3", "number": 3, "name": "Court 3", "group": "indoor", "description": "Same lines and rate as the other indoor courts, kept clear of the rain." },
+    { "id": "court-4", "number": 4, "name": "Court 4", "group": "indoor", "description": "Bookable from the 6 AM slot through the last start at 10 PM." },
+    { "id": "court-5", "number": 5, "name": "Court 5", "group": "outdoor", "description": "Open air under a roof, so a drizzle doesn't end the game." },
+    { "id": "court-6", "number": 6, "name": "Court 6", "group": "outdoor", "description": "Same roof and rate as Court 5, a good pair for a group of eight." }
+  ],
+  "rates": {
+    "_comment": "SAMPLE rates: replace per client. Amounts are PHP per court, per hour. Off-peak applies to start hours >= fromHour and < toHour on the listed days (0 = Sunday).",
+    "indoor": {
+      "standard": 450,
+      "standardLabel": "Peak hours and weekends",
+      "offPeak": { "amount": 350, "days": [1, 2, 3, 4, 5], "fromHour": 6, "toHour": 16, "label": "Weekdays 6 AM–4 PM" }
+    },
+    "outdoor": {
+      "standard": 350,
+      "standardLabel": "All day, every day"
+    }
+  }
+}

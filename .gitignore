@@ -1,0 +1,26 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# environment (booking endpoint and any keys)
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# local tooling state
+.claude/settings.local.json
+.impeccable/config.local.json

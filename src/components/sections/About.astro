@@ -1,0 +1,91 @@
+---
+/** About the club: the late-night idea behind "Dink till eleven." No invented people, years or numbers. */
+import { Image } from 'astro:assets';
+import { site } from '../../data/site-config';
+import { photos } from '../../data/photos';
+import Button from '../ui/Button.astro';
+
+const copy = site.sections.about;
+// PLACEHOLDER: replace with the club's real photo (see src/data/photos.ts)
+const photo = photos['player-with-paddle'];
+---
+
+<section class="about on-dark" id="about" aria-labelledby="about-title">
+  <div class="container about__inner">
+    <figure class="about__photo">
+      <Image src={photo.src} alt={photo.alt} widths={[440, 660, 880]} sizes="440px" loading="lazy" style={`object-position: ${photo.focus}`} />
+      <figcaption>Photo: {photo.credit}</figcaption>
+    </figure>
+    <div class="about__copy">
+      <h2 id="about-title" class="display">
+        {copy.lines.map((line) => <span>{line}</span>)}
+      </h2>
+      {copy.paragraphs.map((p) => <p>{p}</p>)}
+      <p class="about__sign display">{site.tagline}</p>
+      <Button href="#booking" variant="ball">{site.cta.book}</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding: var(--space-10) 0;
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+  }
+
+  .about__inner {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: var(--space-9);
+    align-items: center;
+  }
+
+  .about__photo {
+    position: relative;
+    height: 600px;
+  }
+
+  .about__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .about__photo figcaption {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-on-dark-soft);
+  }
+
+  .about__copy {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+    max-width: 620px;
+  }
+
+  h2 {
+    font-size: var(--display-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  h2 span {
+    display: block;
+  }
+
+  .about__copy > p {
+    font-size: var(--text-md);
+    color: var(--color-on-dark-soft);
+    text-wrap: pretty;
+  }
+
+  .about__copy > .about__sign {
+    margin: var(--space-3) 0 var(--space-2);
+    padding: 0 0.06em;
+    font-size: var(--display-md);
+    line-height: 1;
+    color: var(--color-ink);
+    background: var(--color-ball);
+  }
+</style>

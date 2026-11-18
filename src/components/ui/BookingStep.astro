@@ -1,0 +1,60 @@
+---
+/** One step of the booking form. Only the first step is visible until the script takes over. */
+interface Props {
+  id: string;
+  number: number;
+  title: string;
+}
+
+const { id, number, title } = Astro.props;
+const hasActions = Astro.slots.has('actions');
+---
+
+<section class="step" id={`step-${id}`} data-step={id} aria-labelledby={`step-${id}-title`} hidden={number !== 1}>
+  <h3 id={`step-${id}-title`} class="display" tabindex="-1">{title}</h3>
+  <div class="step__body">
+    <slot />
+  </div>
+  {
+    hasActions && (
+      <div class="step__actions">
+        <slot name="actions" />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .step {
+    animation: step-in 0.45s var(--ease-out);
+  }
+
+  h3 {
+    font-size: var(--display-sm);
+    line-height: 0.95;
+    outline: none;
+  }
+
+  .step__body {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+
+  .step__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: var(--rule-thin);
+  }
+
+  @keyframes step-in {
+    from {
+      opacity: 0.001;
+      transform: translateX(18px);
+    }
+  }
+</style>

@@ -1,0 +1,226 @@
+---
+/** Courts grouped as Indoor and Covered Outdoor, then the rate card. Everything comes from courts.json. */
+import { Image } from 'astro:assets';
+import { site } from '../../data/site-config';
+import { getPhoto } from '../../data/photos';
+import { courts, groups, rates } from '../../utils/slots';
+import { formatPeso } from '../../utils/format';
+import Button from '../ui/Button.astro';
+import CourtCard from '../ui/CourtCard.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+const copy = site.sections.courts;
+const off = rates.indoor.offPeak;
+
+const groupRate = (groupId: string): string =>
+  groupId === 'indoor'
+    ? `${formatPeso(rates.indoor.standard)}/hour · ${formatPeso(off.amount)} off-peak, ${off.label.toLowerCase()}`
+    : `${formatPeso(rates.outdoor.standard)}/hour, ${rates.outdoor.standardLabel.toLowerCase()}`;
+
+const rateCard = [
+  { label: groups[0].name, when: rates.indoor.standardLabel, amount: rates.indoor.standard },
+  { label: `${groups[0].name} off-peak`, when: off.label, amount: off.amount },
+  { label: groups[1].name, when: rates.outdoor.standardLabel, amount: rates.outdoor.standard },
+];
+---
+
+<section class="courts" id="courts" aria-labelledby="courts-title">
+  <div class="container">
+    <SectionHeading id="courts-title" lines={copy.lines}>{copy.lede}</SectionHeading>
+
+    {
+      groups.map((group, i) => {
+        // PLACEHOLDER: replace with the club's real photo (see src/data/photos.ts)
+        const photo = getPhoto(group.image);
+        return (
+          <article class:list={['group', { 'group--flip': i % 2 === 1 }]} aria-labelledby={`group-${group.id}`}>
+            <figure class="group__photo">
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                widths={[580, 870, 1160]}
+                sizes="580px"
+                loading="lazy"
+                style={`object-position: ${photo.focus}`}
+              />
+              <figcaption>Photo: {photo.credit}</figcaption>
+            </figure>
+            <div class="group__body">
+              <h3 id={`group-${group.id}`} class="display">
+                {group.name}
+                <span>{group.courtsLabel}</span>
+              </h3>
+              <p class="group__summary">{group.summary}</p>
+              <ul class="group__courts">
+                {courts
+                  .filter((c) => c.group === group.id)
+                  .map((court) => (
+                    <CourtCard court={court} rateLabel={groupRate(group.id)} />
+                  ))}
+              </ul>
+            </div>
+          </article>
+        );
+      })
+    }
+
+    <div class="rate-card on-dark" id="rates" aria-labelledby="rates-title">
+      <h3 id="rates-title" class="display">{site.sections.rates.title}</h3>
+      <dl class="rate-card__list">
+        {
+          rateCard.map((r) => (
+            <div class="rate">
+              <dt>
+                <span class="rate__label">{r.label}</span>
+                <span class="rate__when">{r.when}</span>
+              </dt>
+              <dd class="display tabular">
+                {formatPeso(r.amount)}
+                <span>/hour</span>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      <div class="rate-card__foot">
+        <p>{site.sections.rates.note}</p>
+        <Button href="#booking" variant="ball">{site.cta.book}</Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .courts {
+    padding: var(--space-10) 0;
+  }
+
+  .group {
+    display: grid;
+    grid-template-columns: 580px 1fr;
+    gap: var(--space-8);
+    margin-top: var(--space-9);
+  }
+
+  .group--flip {
+    grid-template-columns: 1fr 580px;
+  }
+
+  .group--flip .group__photo {
+    order: 2;
+  }
+
+  .group__photo {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 460px;
+  }
+
+  .group__photo img {
+    width: 100%;
+    height: 100%;
+    min-height: 440px;
+    object-fit: cover;
+  }
+
+  .group__photo figcaption {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+  }
+
+  h3 {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    font-size: var(--display-md);
+  }
+
+  h3 span {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--color-ink-soft);
+  }
+
+  .group__summary {
+    max-width: 520px;
+    margin: var(--space-3) 0 var(--space-6);
+    font-size: 17px;
+    text-wrap: pretty;
+  }
+
+  /* Rate card */
+  .rate-card {
+    margin-top: var(--space-10);
+    padding: var(--space-7) var(--space-7) var(--space-6);
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+  }
+
+  .rate-card h3 {
+    font-size: var(--display-sm);
+  }
+
+  .rate-card__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: var(--space-6);
+    border-top: 1.5px solid var(--color-on-dark);
+  }
+
+  .rate {
+    display: grid;
+    align-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-5) var(--space-5) var(--space-2) 0;
+  }
+
+  .rate + .rate {
+    padding-left: var(--space-5);
+    border-left: 1px solid rgb(255 255 255 / 0.3);
+  }
+
+  .rate dt {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .rate__label {
+    font-weight: 700;
+  }
+
+  .rate__when {
+    font-size: var(--text-sm);
+    color: var(--color-on-dark-soft);
+  }
+
+  .rate dd {
+    font-size: var(--display-lg);
+    line-height: 0.8;
+  }
+
+  .rate dd span {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .rate:nth-child(2) dd {
+    color: var(--color-ball);
+  }
+
+  .rate-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgb(255 255 255 / 0.3);
+    color: var(--color-on-dark-soft);
+  }
+</style>

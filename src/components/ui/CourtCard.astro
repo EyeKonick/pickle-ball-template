@@ -1,0 +1,62 @@
+---
+/** One court as a ruled entry: number, name, description, rate, and a link that preselects it in the form. */
+import type { Court } from '../../utils/slots';
+import { site } from '../../data/site-config';
+import Button from './Button.astro';
+
+interface Props {
+  court: Court;
+  rateLabel: string;
+}
+
+const { court, rateLabel } = Astro.props;
+---
+
+<li class="court">
+  <span class="court__number display tabular" aria-hidden="true">{court.number}</span>
+  <div class="court__body">
+    <h4>{court.name}</h4>
+    <p>{court.description}</p>
+    <p class="court__rate">{rateLabel}</p>
+  </div>
+  <Button href={`?court=${court.id}#booking`} variant="ghost" size="md" data-booking-link="" aria-label={`${site.cta.book}: ${court.name}`}>
+    Book {court.name}
+  </Button>
+</li>
+
+<style>
+  .court {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: var(--space-5);
+    padding: 18px 0;
+    border-top: var(--rule-thin);
+  }
+
+  .court:first-child {
+    border-top: var(--rule);
+  }
+
+  .court__number {
+    font-size: var(--display-md);
+    line-height: 0.8;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: 700;
+  }
+
+  .court__body p {
+    max-width: 360px;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .court__body .court__rate {
+    margin-top: var(--space-1);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+</style>

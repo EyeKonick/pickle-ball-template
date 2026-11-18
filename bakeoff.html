@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Hero Bakeoff · Dinkwell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bar-h: 56px;
+  --bg: #111312;
+  --ink: #F1F2EF;
+  --muted: #A3A8A4;
+  --line: #2A2E2C;
+  --active: #F1F2EF;
+  --active-ink: #111312;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  min-width: 1440px;
+  background: var(--bg); color: var(--ink);
+  font: 400 14px/1.4 "Onest", "Segoe UI", sans-serif;
+  display: flex; flex-direction: column;
+}
+.bar {
+  height: var(--bar-h); flex: none;
+  display: flex; align-items: center; gap: 24px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line);
+}
+.bar__title { font-weight: 600; font-size: 14px; margin-right: 8px; }
+[role=tablist] { display: flex; gap: 4px; padding: 4px; background: #1B1E1C; border-radius: 999px; }
+[role=tab] {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 36px; padding: 0 16px 0 8px;
+  border: 0; border-radius: 999px;
+  background: transparent; color: var(--muted);
+  font: inherit; font-size: 14px; font-weight: 500; line-height: 1;
+  cursor: pointer;
+  transition: background-color .2s, color .2s;
+}
+[role=tab]:hover { color: var(--ink); background: #262A28; }
+[role=tab][aria-selected=true] { background: var(--active); color: var(--active-ink); }
+[role=tab] kbd {
+  display: grid; place-items: center;
+  width: 22px; height: 22px; border-radius: 6px;
+  font: inherit; font-size: 12px; font-weight: 600; line-height: 1;
+  background: #2A2E2C; color: var(--ink);
+}
+[role=tab][aria-selected=true] kbd { background: var(--active-ink); color: var(--active); }
+[role=tab]:focus-visible { outline: 2px solid #D8F24A; outline-offset: 2px; }
+.hint { margin-left: auto; color: var(--muted); }
+.hint kbd { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin: 0 2px; border: 1px solid var(--line); border-radius: 5px; font: inherit; font-size: 12px; font-weight: 600; line-height: 1; color: var(--ink); }
+.stage { flex: 1; position: relative; }
+.stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+.stage iframe[hidden] { display: none; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="bar__title">Dinkwell hero bakeoff</span>
+  <div role="tablist" aria-label="Hero versions">
+    <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true"><kbd>1</kbd>Clean Club</button>
+    <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1"><kbd>2</kbd>Editorial Sport</button>
+    <button role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" tabindex="-1"><kbd>3</kbd>Bold Local</button>
+  </div>
+  <span class="hint">Switch with <kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd></span>
+</div>
+<main class="stage">
+  <iframe id="panel-1" role="tabpanel" aria-labelledby="tab-1" title="Clean Club hero" src="hero-clean-club.html"></iframe>
+  <iframe id="panel-2" role="tabpanel" aria-labelledby="tab-2" title="Editorial Sport hero" src="hero-editorial-sport.html" hidden></iframe>
+  <iframe id="panel-3" role="tabpanel" aria-labelledby="tab-3" title="Bold Local hero" src="hero-bold-local.html" hidden></iframe>
+</main>
+<script>
+(function () {
+  const tabs = [...document.querySelectorAll("[role=tab]")];
+  const panels = tabs.map(t => document.getElementById(t.getAttribute("aria-controls")));
+  function select(i, focus) {
+    tabs.forEach((t, j) => {
+      const on = i === j;
+      t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1;
+      panels[j].hidden = !on;
+    });
+    if (focus) tabs[i].focus();
+    try { localStorage.setItem("bakeoff-tab", i); } catch (_) {}
+    history.replaceState(null, "", "#" + (i + 1));
+  }
+  tabs.forEach((t, i) => t.addEventListener("click", () => select(i)));
+  document.querySelector("[role=tablist]").addEventListener("keydown", e => {
+    const i = tabs.indexOf(document.activeElement);
+    if (e.key === "ArrowRight") { e.preventDefault(); select((i + 1) % 3, true); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); select((i + 2) % 3, true); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^[123]$/.test(e.key)) select(+e.key - 1);
+  });
+  // Heroes forward 1/2/3 when focus is inside their frame
+  addEventListener("message", e => { if (e.data && /^[123]$/.test(e.data.bakeoffKey)) select(+e.data.bakeoffKey - 1); });
+
+  let start = 0;
+  const fromHash = parseInt(location.hash.slice(1), 10);
+  if (fromHash >= 1 && fromHash <= 3) start = fromHash - 1;
+  else { try { start = +(localStorage.getItem("bakeoff-tab") || 0); } catch (_) {} }
+  select(start);
+})();
+</script>
+</body>
+</html>

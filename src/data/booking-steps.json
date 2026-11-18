@@ -1,0 +1,19 @@
+{
+  "_comment": "SAMPLE: replace per client. 'howItWorks' feeds the How Booking Works section; 'formSteps' labels the booking form's progress indicator, in order.",
+  "howItWorks": [
+    { "title": "Choose court and time", "text": "Pick a court, or any indoor or outdoor court, then a date, a start time and 1 to 3 hours." },
+    { "title": "Enter your details", "text": "Your name, mobile number and email, so our staff can reach you about the request." },
+    { "title": "Pay via GCash", "text": "Send the exact amount to our GCash account. The QR code and number are on the payment step." },
+    { "title": "Upload proof", "text": "Add a screenshot of your GCash receipt and its 13-digit reference number." },
+    { "title": "Submit", "text": "You get a booking code, and your request goes to our staff as Pending Review." },
+    { "title": "Wait for confirmation", "text": "Staff check the payment, then confirm or reject the request by email and SMS." }
+  ],
+  "formSteps": [
+    { "id": "slot", "label": "Court & time" },
+    { "id": "details", "label": "Your details" },
+    { "id": "review", "label": "Review" },
+    { "id": "payment", "label": "Pay via GCash" },
+    { "id": "proof", "label": "Proof of payment" },
+    { "id": "pending", "label": "Pending review" }
+  ]
+}

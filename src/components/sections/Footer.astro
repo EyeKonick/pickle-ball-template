@@ -1,0 +1,105 @@
+---
+/** Footer on a light surface: logo (or wordmark), tagline, address, phone, final Book a Court, credits. */
+import { site, fullAddress } from '../../data/site-config';
+import { galleryOrder, photos } from '../../data/photos';
+import Button from '../ui/Button.astro';
+import Wordmark from '../ui/Wordmark.astro';
+
+const year = new Date().getFullYear();
+const credits = [...new Set(galleryOrder.map((id) => photos[id].credit))].join(', ');
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <Wordmark size="lg" />
+        <p class="footer__tagline display">{site.tagline}</p>
+      </div>
+      <Button href="#booking">{site.cta.book}</Button>
+    </div>
+
+    <div class="footer__cols">
+      <div>
+        <h2>Address</h2>
+        <p>{fullAddress}</p>
+      </div>
+      <div>
+        <h2>Phone</h2>
+        <p><a href={`tel:${site.phone.e164}`}>{site.phone.display}</a></p>
+      </div>
+      <div>
+        <h2>Email</h2>
+        <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+      </div>
+      <div>
+        <h2>Hours</h2>
+        <p>{site.hours.label}</p>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>© {year} {site.name}</p>
+      <p>Photos: {credits}. Free-license photos via Unsplash and Pexels.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: var(--space-9) 0 var(--space-7);
+    background: var(--color-paper);
+    border-top: var(--rule);
+  }
+
+  .footer__top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: var(--space-7);
+    border-bottom: var(--rule);
+  }
+
+  .footer__brand {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .footer__tagline {
+    font-size: var(--display-sm);
+    line-height: 1;
+  }
+
+  .footer__cols {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1.2fr 1fr;
+    gap: var(--space-6);
+    padding: var(--space-6) 0;
+    border-bottom: var(--rule-thin);
+  }
+
+  h2 {
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .footer__cols p {
+    font-size: 15px;
+    color: var(--color-ink-soft);
+  }
+
+  .footer__cols a {
+    color: var(--color-ink);
+    text-underline-offset: 4px;
+  }
+
+  .footer__legal {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-top: var(--space-5);
+    font-size: 13px;
+    color: var(--color-ink-soft);
+  }
+</style>

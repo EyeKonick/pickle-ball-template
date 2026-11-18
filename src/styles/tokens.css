@@ -1,0 +1,69 @@
+/* Design tokens: the Editorial Sport world. Re-theme the whole site from here. */
+:root {
+  /* Color */
+  --color-paper: #efe8d8; /* newsprint ground */
+  --color-paper-shade: #e5dcc7; /* hover on paper, wells */
+  --color-ink: #15201a; /* text, rules, primary buttons */
+  --color-ink-soft: #46524b; /* secondary text on paper */
+  --color-ink-faint: rgb(21 32 26 / 0.35); /* thin dividers */
+  --color-court: #1e4ca1; /* court blue: slabs */
+  --color-court-deep: #183f87; /* fields on court blue */
+  --color-court-hover: #1b4593;
+  --color-ball: #e6f14a; /* ball yellow: highlighter, stamp, action on blue */
+  --color-ball-deep: #d6e332;
+  --color-on-dark: #ffffff;
+  --color-on-dark-soft: rgb(255 255 255 / 0.84);
+  --color-error: #a3261b;
+
+  /* Type */
+  --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+  --font-body: 'Libre Franklin', 'Segoe UI', sans-serif;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-md: 19px;
+  --text-lg: 24px;
+  --display-sm: 40px;
+  --display-md: 64px;
+  --display-lg: 104px;
+  --display-xl: 158px;
+  --leading-tight: 0.8;
+  --leading-display: 0.88;
+  --leading-body: 1.5;
+
+  /* Space (8px rhythm) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* Layout */
+  --container: 1200px;
+  --header-h: 84px;
+  --hero-h: 900px;
+  --seam: 740px; /* where paper meets photo in the hero, from the viewport's left edge */
+
+  /* Lines, radii, depth */
+  --rule: 1.5px solid var(--color-ink);
+  --rule-thin: 1px solid var(--color-ink-faint);
+  --radius-none: 0;
+  --radius-round: 50%;
+  --shadow-slab: 0 30px 50px -30px rgb(21 32 26 / 0.7);
+  --shadow-stamp: 0 10px 24px -12px rgb(21 32 26 / 0.55);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 0.2s;
+  --duration-base: 0.35s;
+  --duration-slow: 1.1s;
+
+  /* Focus */
+  --focus-ring: 3px solid var(--color-court);
+  --focus-ring-on-dark: 3px solid var(--color-ball);
+}

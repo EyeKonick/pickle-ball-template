@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import CourtsRates from '../components/sections/CourtsRates.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import Booking from '../components/sections/Booking.astro';
+import About from '../components/sections/About.astro';
+import Gallery from '../components/sections/Gallery.astro';
+import Location from '../components/sections/Location.astro';
+import Footer from '../components/sections/Footer.astro';
+import { site } from '../data/site-config';
+
+const title = `${site.name}: ${site.tagline.replace(/\.$/, '')} | Pickleball courts in ${site.address.locality}`;
+---
+
+<BaseLayout title={title} description={site.description}>
+  <Header />
+  <main>
+    <Hero />
+    <CourtsRates />
+    <HowItWorks />
+    <Booking />
+    <About />
+    <Gallery />
+    <Location />
+  </main>
+  <Footer />
+</BaseLayout>

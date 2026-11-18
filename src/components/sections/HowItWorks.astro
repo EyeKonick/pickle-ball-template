@@ -1,0 +1,111 @@
+---
+/** The six-step reservation flow, then the plain statement that payment is not confirmation. */
+import { site } from '../../data/site-config';
+import steps from '../../data/booking-steps.json';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+const copy = site.sections.how;
+---
+
+<section class="how" id="how-booking-works" aria-labelledby="how-title">
+  <div class="container">
+    <SectionHeading id="how-title" lines={copy.lines}>{copy.lede}</SectionHeading>
+
+    <ol class="steps">
+      {
+        steps.howItWorks.map((step, i) => (
+          <li class="step">
+            <span class="step__number display tabular" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <aside class="callout on-dark" aria-labelledby="callout-title">
+      <h3 id="callout-title" class="display">
+        {copy.calloutLines.map((line) => <span>{line}</span>)}
+      </h3>
+      <p>{site.policy.confirmation}</p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .how {
+    padding: 0 0 var(--space-10);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin-top: var(--space-8);
+  }
+
+  .step {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: 0 var(--space-5) 0 var(--space-4);
+    border-left: var(--rule-thin);
+  }
+
+  .step:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .step__number {
+    font-size: 88px;
+    line-height: 0.8;
+    margin-bottom: var(--space-3);
+  }
+
+  .step:last-child .step__number {
+    display: inline-block;
+    justify-self: start;
+    padding: 0 0.06em;
+    background: linear-gradient(transparent 55%, var(--color-ball) 55%);
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .step p {
+    font-size: 15px;
+    color: var(--color-ink-soft);
+    text-wrap: pretty;
+  }
+
+  .callout {
+    display: grid;
+    grid-template-columns: 1fr 460px;
+    align-items: end;
+    gap: var(--space-8);
+    margin-top: var(--space-9);
+    padding: var(--space-7);
+    background: var(--color-court);
+    color: var(--color-on-dark);
+  }
+
+  .callout h3 {
+    font-size: var(--display-lg);
+    line-height: var(--leading-display);
+  }
+
+  .callout h3 span {
+    display: block;
+  }
+
+  .callout p {
+    font-size: var(--text-md);
+    color: var(--color-on-dark);
+    text-wrap: pretty;
+  }
+</style>

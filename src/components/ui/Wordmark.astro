@@ -1,0 +1,57 @@
+---
+/**
+ * Club logo. Uses src/assets/images/brand/logo.svg exactly as supplied when the file exists;
+ * otherwise sets the condensed text wordmark from site-config.
+ */
+import type { ImageMetadata } from 'astro';
+import { site } from '../../data/site-config';
+
+interface Props {
+  size?: 'md' | 'lg';
+}
+
+const { size = 'md' } = Astro.props;
+const logoFiles = import.meta.glob<{ default: ImageMetadata }>('../../assets/images/brand/logo.svg', { eager: true });
+const logo = Object.values(logoFiles)[0]?.default;
+---
+
+{
+  logo ? (
+    <img class:list={['logo', `logo--${size}`]} src={logo.src} width={logo.width} height={logo.height} alt={site.name} />
+  ) : (
+    <span class:list={['wordmark', `wordmark--${size}`]}>
+      <span aria-hidden="true">{site.wordmark}</span>
+      <span class="visually-hidden">{site.name}</span>
+    </span>
+  )
+}
+
+<style>
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .wordmark--md {
+    font-size: 34px;
+  }
+
+  .wordmark--lg {
+    font-size: 72px;
+  }
+
+  .logo {
+    width: auto;
+  }
+
+  .logo--md {
+    height: 34px;
+  }
+
+  .logo--lg {
+    height: 72px;
+  }
+</style>
